@@ -1,5 +1,6 @@
 from typing import Set
 from grid import Grid, List, Tile
+import copy
 
 class TileSet:
     tiles: Set[Tile]
@@ -8,9 +9,10 @@ class TileSet:
         self.tiles = set(initalTiles)
 
     def add(self, tile: Tile) -> 'TileSet':
-        if not self.has(tile):
-            self.tiles.add(tile)
-        return self
+        copied = copy.deepcopy(self)
+        if not copied.has(tile):
+            copied.tiles.add(tile)
+        return copied
 
     def has(self, tile: Tile) -> bool:
         return any([otherTile.row == tile.row and otherTile.column == tile.column for otherTile in self.tiles])
