@@ -11,10 +11,14 @@ from grid import Grid, List
 from trie import Trie, TrieNode
 from os import environ
 from flask import Flask
+from flask_cors import CORS, cross_origin
 
 hostName = "0.0.0.0"
 serverPort = int(environ.get('PORT', '8080'))
+
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 class CachedSquaredle:
     day: str
@@ -42,17 +46,6 @@ class CachedSquaredle:
                 "solution": [sha256(x.encode("utf8")).hexdigest() for x in self.solution]}
 
 cache = CachedSquaredle() 
-
-class MyServer(BaseHTTPRequestHandler):
-    cache = CachedSquaredle() 
-
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-
-        self.wfile.write(bytes(json.dumps(self.cache.createFrontendRes()), encoding='utf8'))
 
 @app.route('/')
 def getGrid():
